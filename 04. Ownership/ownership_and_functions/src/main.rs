@@ -4,7 +4,7 @@ fn main() {
     takes_ownership(s); // s's value moves into the function...
                         // ... and so is no longer valid here
                         // println!("{s}");             // this would cause a compiler error because the
-                        // ownershipt of s has already been taken
+                        // ownership of s has already been taken
                         // if s.clone() was used, the ownership would
                         // not be transfered
     let x = 5; // x comes into scope
