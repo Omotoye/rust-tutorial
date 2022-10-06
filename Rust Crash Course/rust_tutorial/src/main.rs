@@ -6,8 +6,16 @@ use rand::Rng; // for generating random number
 use std::cmp::Ordering;
 use std::fs::File;
 use std::io::{BufRead, BufReader, ErrorKind, Write};
+use std::ops::Add; // allow us to perform addition with our generics
+use std::collections::HashMap;
+
+mod restaurant;
+use crate::restaurant::order_food;
+
 
 fn main() {
+    const PI: f32 = 3.141592;
+
     // println!("What is your name?"); // println!() is a macro because of the ! and not a function
 
     // variables are immutable by default; to make them mutable, a mut keyword has to come before
@@ -203,36 +211,251 @@ fn main() {
 //    let int3_u32: u32 = (int_u8 as u32) + (int2_u8 as u32);
 
     /******** Enums *************/
-    enum Day {
-        Monday, 
-        Tuesday,
-        Wednesday,
-        Thursday, 
-        Friday,
-        Saturday,
-        Sunday,
+    // enum Day{
+    //     Monday, 
+    //     Tuesday,
+    //     Wednesday,
+    //     Thursday, 
+    //     Friday,
+    //     Saturday,
+    //     Sunday,
+    // };
+
+    // // Defining Methods for an Enum type
+    // impl Day {
+    //     fn is_weekend(&self) -> bool {
+    //         match self {
+    //             Day::Saturday | Day::Sunday => true, 
+    //             _ => false
+    //         }
+    //     }
+    // }
+
+    // let today: Day = Day::Monday;
+    // match today {
+    //     Day::Monday => println!("Everyone hates Monday"), 
+    //     Day::Tuesday => println!("Donut day"),
+    //     Day::Wednesday => println!("Hump day"),
+    //     Day::Thursday => println!("Pay day"),
+    //     Day::Friday => println!("Almost Weekend"),
+    //     Day::Saturday => println!("Weekend"),
+    //     Day::Sunday => println!("Weekend"),
+    // };
+
+    // println!("Is today the weekend {}", today.is_weekend());
+
+    /****** Vectors  *********/
+    // let vec1: Vec<i32> = Vec::new();
+    // let mut vec2 = vec![1, 2, 3, 4];
+    // vec2.push(5);
+    // let mut vec3: Vec<i32> = Vec::new();
+    // vec3 = [1, 3, 4, 5, 7, 8].to_vec();
+    // println!("1st: {}", vec2[0]);
+    // let second: &i32 = &vec2[1];
+    // match vec2.get(1){
+    //     Some(second) => println!("2nd: {}", second), 
+    //     None => println!("No 2nd value"), 
+    // }
+    // for i in &mut vec2 {
+    //     *i *= 2;
+    // }
+    // for i in &vec2 {
+    //     println!("{}", i);
+    // }
+    // println!("Vec Length {}", vec2.len());
+    // println!("Pop: {:?}", vec2.pop());
+
+    // get_sum(5, 4);
+    // println!("{}", get_sum_2(5,4));
+    // println!("{}", get_sum_3(5,4));
+    
+    // let (val_1, val_2) = get_2(3);
+    // println!("Nums: {} {}", val_1, val_2);
+
+    // let num_list = vec![1, 2, 3, 4, 5];
+
+    // println!("Sum of list = {}", sum_list(&num_list));
+
+    // println!("5 + 4 = {}", get_sum_gen(5, 4));
+    // println!("5.2 + 4.6 = {}", get_sum_gen(5.2, 4.6));
+
+    /******* Ownership ********/
+    // let str1 = String::from("world");
+// 
+    // This would only occur with str, array, vect any derived type but not
+    // with int, float
+    // let str2 = str1;
+    // println!("Hello {}", str1); // Error
+    // let str2 = str1.clone();
+    // println!("Hello {}", str1); // No Error
+
+    // let str_1 = str1.clone();
+    // print_str(str1);
+    // let str3 = print_return_str(str_1);
+    // println!("str3 = {}", str3);
+
+    // let mut str_3 = String::from("Omotoye");
+    // change_string(&mut str_3);
+
+    // let mut heroes = HashMap::new();
+    // heroes.insert("Superman", "Clark kent");
+    // heroes.insert("Batman", "Bruce Wayne");
+    // heroes.insert("The Flash", "Barry Allen");
+
+    // for (k, v) in heroes.iter() {
+    //     println!("{} = {}", k, v);
+    // }
+
+    // println!("Length of Dictionary: {}", heroes.len());
+
+    // if heroes.contains_key(&"Batman") {
+    //     let the_batman = heroes.get(&"Batman");
+    //     match the_batman {
+    //         Some(x) => println!("Batman is a hero"),
+    //         None => println!("Batman is not a hero"), 
+    //     }
+    // }
+
+    /******* Struct ********* */
+    // struct Customer {
+    //     name: String,
+    //     address: String, 
+    //     balance: f32,
+    // }
+
+    // let mut bob = Customer{
+    //     name: String::from("Bob Smith"),
+    //     address: String::from("555 Main St"),
+    //     balance: 234.50
+    // };
+    // bob.address = String::from("505 Main St");
+
+    // struct Rectangle {
+    //     length: T, 
+    //     height: U, 
+    // }
+    // let rec = Rectangle{length: 4, height: 10.5};
+
+    /****** Trait ******* */
+    // trait Shape {
+    //     fn new(length: f32, width: f32) -> Self;
+    //     fn area(&self) -> f32;
+    // }
+
+    // struct Circle {length: f32, width: f32};
+    // struct Rectangle{length: f32, width: f32};
+
+    // // implementing the Shape trait for Rectangle and Cirle
+    // impl Shape for Rectangle {
+    //     fn new(length: f32, width: f32) -> Rectangle {
+    //         return Rectangle{length, width};
+    //     }
+    //     fn area(&self) -> f32 {
+    //         return self.length * self.width;
+    //     }
+    // }
+
+    // impl Shape for Circle {
+    //     fn new(length: f32, width: f32) -> Circle {
+    //         return Circle{length, width};
+    //     }
+    //     fn area(&self) -> f32 {
+    //         return (self.length / 2.0).powf(2.0) * PI;
+    //     }
+    // }
+
+    // let rec: Rectangle = Shape::new( 10.0, 10.0);
+    // let circ: Circle= Shape::new( 10.0,  10.0);
+
+    // println!("Rec Area: {}", rec.area());
+    // println!("Circ Area: {}", circ.area());
+
+    /***** Calling function from Modules *******/
+    // order_food();
+
+    /******** Error Handling ******* */
+    // panic!("A Terrible Error has just happened!");
+// 
+    // let lil_arr: [i32, 2] = [1, 2];
+    // println!("{}", lil_arr[10]); // Error 
+    let path = "lines.txt";
+    let output = File::create(path);
+    let mut output = match output {
+        Ok(file) => file, 
+        Err(error) => {
+            panic!("Problem creating file: {:?}", error);
+        }
     };
 
-    // Defining Methods for an Enum type
-    impl Day {
-        fn is_weekend($self) -> bool {
-            match self {
-                Day::Saturday | Day::Sunday => true, 
-                _ => false
-            };
-        }
+    write!(output, "Just some\nRandom words").expect("Failed to write to file");
+
+    let input = File::open(path).unwrap();
+    let buffered = BufReader::new(input);
+    for line in buffered.lines() {
+        println!("{}", line.unwrap());
     }
 
-    let today: Day = Day::Monday;
-    match today {
-        Day::Monday => println!("Everyone hates Monday"), 
-        Day::Tuesday => println!("Donut day"),
-        Day::Wednesday => println!("Hump day"),
-        Day::Thursday => println!("Pay day"),
-        Day::Friday => println!("Almost Weekend"),
-        Day::Saturday => println!("Weekend"),
-        Day::Sunday => println!("Weekend"),
+    let output2 = File::create("rand.txt");
+    let output2 = match output2 {
+        Ok(file) => file, 
+        Err(error) => match error.kind() {
+            ErrorKind::NotFound => match File::create("rand.txt") {
+                Ok(fc) => fc, 
+                Err(e) => panic!("Can't create file: {:?}", error),
+            },
+        _other_error => panic!("Problem opening file: {:?}", error),
+        },
     };
 
-    println!("Is today the weekend {}", today.is_weekend());
+    /********Restart from Iterators..... */
 }
+
+fn print_str(x: String) {
+    println!("A string {}", x);
+}
+
+fn print_return_str(x: String) -> String {
+    println!("A string {}", x); 
+    x
+}
+
+fn change_string(name: &mut String) {
+    name.push_str(" is happy");
+    println!("Message: {}", name);
+}
+
+/************ Generics  **********/
+fn get_sum_gen<T:Add<Output = T>>(x: T, y: T) -> T {
+    return x + y;
+}
+
+
+/*********** Functions **************/
+fn say_hello() {
+    println!("Hello");
+}
+
+fn get_sum(x: i32, y: i32) {
+    println!("{} + {} = {}", x, y, x+y);
+}
+
+fn get_sum_2(x: i32, y: i32) -> i32 {
+    x + y
+}
+
+fn get_sum_3(x: i32, y: i32) -> i32 {
+    return x + y;
+}
+
+fn get_2(x: i32) -> (i32, i32) {
+    (x + 1, x + 2)
+}
+
+fn sum_list(list: &[i32]) -> i32 {
+    let mut sum = 0;
+    for &val in list.iter(){
+        sum += &val;
+    }
+    sum
+}
+
