@@ -3,15 +3,19 @@
 use std::io; // library for standard input/output
              // use std::io::* // to bring in all public library in std::io into this programs scope
 use rand::Rng; // for generating random number
+use std::cell::RefCell;
 use std::cmp::Ordering;
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader, ErrorKind, Write};
 use std::ops::Add; // allow us to perform addition with our generics
-use std::collections::HashMap;
+use std::rc::Rc;
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::time::Duration;
 
 mod restaurant;
 use crate::restaurant::order_food;
-
 
 fn main() {
     const PI: f32 = 3.141592;
@@ -98,7 +102,7 @@ fn main() {
     //     1..=18 => println!("Important Birthday"),
 
     //     // if age2 match 21 or 50
-    //     21 | 50 => println!("Important Birthday level 2"), 
+    //     21 | 50 => println!("Important Birthday level 2"),
 
     //     // if age2 match num in range 65 - MAX of i32
     //     65..=i32::MAX => println!("Important Birthday level 3"),
@@ -111,67 +115,67 @@ fn main() {
     // println!("Just Checking");
 
     // let my_age: i8 = 18;
-    // let voting_age: i8 = 18; 
+    // let voting_age: i8 = 18;
 
     // match my_age.cmp(&voting_age) {
-    //     Ordering::Less => println!("Can't vote"), 
-    //     Ordering::Greater => println!("Can Vote"), 
+    //     Ordering::Less => println!("Can't vote"),
+    //     Ordering::Greater => println!("Can Vote"),
     //     Ordering::Equal => println!("You gained the right to vote"),
     // };
 
     // println!("{}", voting_age);
 
     /*** Arrays ****/
-//     let arr_1 = [1, 2, 3, 4,];
-//     println!("1st: {}", arr_1[0]);
-//     println!("Length: {}", arr_1.len());
+    //     let arr_1 = [1, 2, 3, 4,];
+    //     println!("1st: {}", arr_1[0]);
+    //     println!("Length: {}", arr_1.len());
 
-//     // looping through arrays 
-//     let arr_2 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-//     let mut loop_idx = 0;
+    //     // looping through arrays
+    //     let arr_2 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    //     let mut loop_idx = 0;
 
-//     // using loop
-//     loop {
-//         if arr_2[loop_idx] % 2 == 0 {
-//             loop_idx += 1;
-//             continue;
-//         }
-//          if arr_2[loop_idx]  == 9 {
-//            break;
-//         }
-//         println!("Val: {}", arr_2[loop_idx]);
-//         loop_idx  += 1;
-        
-//     }
-//    // using while loops 
-//    let mut loop_idx = 0;
+    //     // using loop
+    //     loop {
+    //         if arr_2[loop_idx] % 2 == 0 {
+    //             loop_idx += 1;
+    //             continue;
+    //         }
+    //          if arr_2[loop_idx]  == 9 {
+    //            break;
+    //         }
+    //         println!("Val: {}", arr_2[loop_idx]);
+    //         loop_idx  += 1;
 
-//    println!();
-//    while loop_idx < arr_2.len() {
-//     println!("Arr: {}", arr_2[loop_idx]);
-//     loop_idx += 1;
-//    } 
+    //     }
+    //    // using while loops
+    //    let mut loop_idx = 0;
 
-//    // using for loops 
-//    println!();
-//    for val in arr_2.iter() {
-//     println!("Val: {}", val);
-//    }
+    //    println!();
+    //    while loop_idx < arr_2.len() {
+    //     println!("Arr: {}", arr_2[loop_idx]);
+    //     loop_idx += 1;
+    //    }
 
-   /***** Tuples *******/
-//    let my_tuple: (u8, String, f64) = (47, "Omotoye".to_string(), 50_000.00);
+    //    // using for loops
+    //    println!();
+    //    for val in arr_2.iter() {
+    //     println!("Val: {}", val);
+    //    }
 
-//    println!("Name: {}", my_tuple.1);
+    /***** Tuples *******/
+    //    let my_tuple: (u8, String, f64) = (47, "Omotoye".to_string(), 50_000.00);
 
-//    // tuple unpacking 
-//    let (v1, v2, v3) = my_tuple;
-//    println!("Age: {}", v1);
+    //    println!("Name: {}", my_tuple.1);
+
+    //    // tuple unpacking
+    //    let (v1, v2, v3) = my_tuple;
+    //    println!("Age: {}", v1);
 
     /********* Strings *********/
     // let mut st1: String = String::new();
     // st1.push('A');
     // st1.push_str(" word");
-    
+
     // for word in st1.split_whitespace() {
     //     println!("{}", word);
     // }
@@ -197,7 +201,7 @@ fn main() {
     // println!("String length: {}", st6.len());
     // st5.clear();
 
-    // // combining strings 
+    // // combining strings
     // let st6: String = String::from("Just some");
     // let st7: String = String::from(" words");
     // let st8: String = st6 + &st7;
@@ -205,17 +209,17 @@ fn main() {
     //     println!("{}", char);
     // }
 
-   /********* Casting ********/
-//    let int_u8: u8 = 5;
-//    let int2_u8: u8 = 4; 
-//    let int3_u32: u32 = (int_u8 as u32) + (int2_u8 as u32);
+    /********* Casting ********/
+    //    let int_u8: u8 = 5;
+    //    let int2_u8: u8 = 4;
+    //    let int3_u32: u32 = (int_u8 as u32) + (int2_u8 as u32);
 
     /******** Enums *************/
     // enum Day{
-    //     Monday, 
+    //     Monday,
     //     Tuesday,
     //     Wednesday,
-    //     Thursday, 
+    //     Thursday,
     //     Friday,
     //     Saturday,
     //     Sunday,
@@ -225,7 +229,7 @@ fn main() {
     // impl Day {
     //     fn is_weekend(&self) -> bool {
     //         match self {
-    //             Day::Saturday | Day::Sunday => true, 
+    //             Day::Saturday | Day::Sunday => true,
     //             _ => false
     //         }
     //     }
@@ -233,7 +237,7 @@ fn main() {
 
     // let today: Day = Day::Monday;
     // match today {
-    //     Day::Monday => println!("Everyone hates Monday"), 
+    //     Day::Monday => println!("Everyone hates Monday"),
     //     Day::Tuesday => println!("Donut day"),
     //     Day::Wednesday => println!("Hump day"),
     //     Day::Thursday => println!("Pay day"),
@@ -253,8 +257,8 @@ fn main() {
     // println!("1st: {}", vec2[0]);
     // let second: &i32 = &vec2[1];
     // match vec2.get(1){
-    //     Some(second) => println!("2nd: {}", second), 
-    //     None => println!("No 2nd value"), 
+    //     Some(second) => println!("2nd: {}", second),
+    //     None => println!("No 2nd value"),
     // }
     // for i in &mut vec2 {
     //     *i *= 2;
@@ -268,7 +272,7 @@ fn main() {
     // get_sum(5, 4);
     // println!("{}", get_sum_2(5,4));
     // println!("{}", get_sum_3(5,4));
-    
+
     // let (val_1, val_2) = get_2(3);
     // println!("Nums: {} {}", val_1, val_2);
 
@@ -281,7 +285,7 @@ fn main() {
 
     /******* Ownership ********/
     // let str1 = String::from("world");
-// 
+    //
     // This would only occur with str, array, vect any derived type but not
     // with int, float
     // let str2 = str1;
@@ -312,14 +316,14 @@ fn main() {
     //     let the_batman = heroes.get(&"Batman");
     //     match the_batman {
     //         Some(x) => println!("Batman is a hero"),
-    //         None => println!("Batman is not a hero"), 
+    //         None => println!("Batman is not a hero"),
     //     }
     // }
 
     /******* Struct ********* */
     // struct Customer {
     //     name: String,
-    //     address: String, 
+    //     address: String,
     //     balance: f32,
     // }
 
@@ -331,8 +335,8 @@ fn main() {
     // bob.address = String::from("505 Main St");
 
     // struct Rectangle {
-    //     length: T, 
-    //     height: U, 
+    //     length: T,
+    //     height: U,
     // }
     // let rec = Rectangle{length: 4, height: 10.5};
 
@@ -375,39 +379,157 @@ fn main() {
 
     /******** Error Handling ******* */
     // panic!("A Terrible Error has just happened!");
-// 
+    //
     // let lil_arr: [i32, 2] = [1, 2];
-    // println!("{}", lil_arr[10]); // Error 
-    let path = "lines.txt";
-    let output = File::create(path);
-    let mut output = match output {
-        Ok(file) => file, 
-        Err(error) => {
-            panic!("Problem creating file: {:?}", error);
-        }
-    };
+    // println!("{}", lil_arr[10]); // Error
+    // let path = "lines.txt";
+    // let output = File::create(path);
+    // let mut output = match output {
+    // Ok(file) => file,
+    // Err(error) => {
+    // panic!("Problem creating file: {:?}", error);
+    // }
+    // };
 
-    write!(output, "Just some\nRandom words").expect("Failed to write to file");
+    // write!(output, "Just some\nRandom words").expect("Failed to write to file");
 
-    let input = File::open(path).unwrap();
-    let buffered = BufReader::new(input);
-    for line in buffered.lines() {
-        println!("{}", line.unwrap());
-    }
+    // let input = File::open(path).unwrap();
+    // let buffered = BufReader::new(input);
+    // for line in buffered.lines() {
+    // println!("{}", line.unwrap());
+    // }
 
-    let output2 = File::create("rand.txt");
-    let output2 = match output2 {
-        Ok(file) => file, 
-        Err(error) => match error.kind() {
-            ErrorKind::NotFound => match File::create("rand.txt") {
-                Ok(fc) => fc, 
-                Err(e) => panic!("Can't create file: {:?}", error),
-            },
-        _other_error => panic!("Problem opening file: {:?}", error),
-        },
-    };
+    // let output2 = File::create("rand.txt");
+    // let output2 = match output2 {
+    // Ok(file) => file,
+    // Err(error) => match error.kind() {
+    // ErrorKind::NotFound => match File::create("rand.txt") {
+    // Ok(fc) => fc,
+    // Err(e) => panic!("Can't create file: {:?}", error),
+    // },
+    // _other_error => panic!("Problem opening file: {:?}", error),
+    // },
+    // };
 
     /********Restart from Iterators..... */
+
+    /******* Iterators ******** */
+    // let mut arr_it = [1, 2, 3, 4];
+    // for val in arr_it.iter() {
+    // println!("{}", val);
+    // }
+    // let mut iter1 = arr_it.iter();
+    // println!("1st: {:?}", iter1.next());
+
+    /************ Closures ****************** */
+    // a closure is a function without a name
+
+    // How to create closure
+    // let var_name = |parameters| -> return_type
+    // {BODY}
+
+    // let can_vote = |age: i32| {
+    // age >= 18
+    // };
+    // println!("Can vote: {}", can_vote(8));
+    // closure can assess variables outside of its body
+    // let mut samp1 = 5;
+    // let print_var = || println!("samp1 = {}", samp1);
+    // print_var();
+    // samp1 = 10;
+    // let mut change_var = || samp1 += 1;
+    // change_var();
+    // println!("samp1 = {}", samp1);
+    // samp1 = 10;
+    // println!("samp1 = {}", samp1);
+
+    // fn use_func<T>(a: i32, b: i32, func: T) -> i32 where T: Fn(i32, i32) -> i32 {
+    // func(a, b)
+    // }
+    // let sum = |a, b| a + b;
+    // let prod = |a, b| a * b;
+    // println!("5 + 4 = {}", use_func(5, 4, sum));
+    // println!("5 * 4 = {}", use_func(5, 4, prod));
+
+    /****** Smart Pointers **********/
+    // let b_int1 = Box::new(10);
+    // println!("b_int1 = {}", b_int1);
+
+    // struct TreeNode<T> {
+    // pub left: Option<Box<TreeNode<T>>>,
+    // pub right: Option<Box<TreeNode<T>>>,
+    // pub key: T,
+    // }
+
+    // impl<T> TreeNode<T> {
+    // pub fn new(key: T) -> Self {
+    // TreeNode {
+    // left: None,
+    // right: None,
+    // key,
+    // }
+    // }
+    // pub fn left(mut self, node: TreeNode<T>) -> Self {
+    // self.left = Some(Box::new(node));
+    // self
+    // }
+    // pub fn right(mut self, node: TreeNode<T>) -> Self {
+    // self.right = Some(Box::new(node));
+    // self
+    // }
+    // }
+
+    // let node1 = TreeNode::new(1)
+    // .left(TreeNode::new(2))
+    // .right(TreeNode::new(3));
+
+    /************ Concurrency ********** */
+    // command problems with parallel programming
+    // 1. threads are accessing data in the wrong order
+    // 2. Threads are blocked from executing because of confusion
+    // over requirements to proceed with execution
+    // let thread1 = thread::spawn(|| {
+    // for i in 1..25 {
+    // println!("Spawned thread: {}", i);
+    // thread::sleep(Duration::from_millis(1));
+    // }
+    // });
+
+    // for i in 1..20 {
+    // println!("Main thread: {}", i);
+    // thread::sleep(Duration::from_millis(1));
+    // }
+    // thread1.join().unwrap();
+
+    // pub struct Bank {
+    // balance: f32,
+    // }
+
+    // fn withdraw(the_bank: Arc<Mutex<Bank>>, amt: f32){
+    // let mut bank_ref = the_bank.lock().unwrap();
+    // if bank_ref.balance < 5.00 {
+    // println!("Current Balance: {} Withdrawal a smaller amount", bank_ref.balance);
+    // } else {
+    // bank_ref.balance -= amt;
+    // println!("Customer withdrew {} Current Balance {}", amt, bank_ref.balance);
+    // }
+    //
+    // }
+
+    // fn customer(the_bank: Arc<Mutex<Bank>>) {
+    // withdraw(&the_bank, 5.00);
+    // }
+    // let bank: Arc<Mutex<Bank>> = Arc::new(Mutex::new(Bank {balance: 20.00}));
+    // let handles = (0..10).map(|_| {
+    // let bank_ref = bank.clone();
+    // thread::spawn(|| {
+    // customer(bank_ref)
+    // })
+    // });
+    // for handle in handles {
+    // handle.join().unwrap();
+    // }
+    // println!("Total {}", bank.lock().unwrap().balance);
 }
 
 fn print_str(x: String) {
@@ -415,7 +537,7 @@ fn print_str(x: String) {
 }
 
 fn print_return_str(x: String) -> String {
-    println!("A string {}", x); 
+    println!("A string {}", x);
     x
 }
 
@@ -425,10 +547,9 @@ fn change_string(name: &mut String) {
 }
 
 /************ Generics  **********/
-fn get_sum_gen<T:Add<Output = T>>(x: T, y: T) -> T {
+fn get_sum_gen<T: Add<Output = T>>(x: T, y: T) -> T {
     return x + y;
 }
-
 
 /*********** Functions **************/
 fn say_hello() {
@@ -436,7 +557,7 @@ fn say_hello() {
 }
 
 fn get_sum(x: i32, y: i32) {
-    println!("{} + {} = {}", x, y, x+y);
+    println!("{} + {} = {}", x, y, x + y);
 }
 
 fn get_sum_2(x: i32, y: i32) -> i32 {
@@ -453,9 +574,8 @@ fn get_2(x: i32) -> (i32, i32) {
 
 fn sum_list(list: &[i32]) -> i32 {
     let mut sum = 0;
-    for &val in list.iter(){
+    for &val in list.iter() {
         sum += &val;
     }
     sum
 }
-
