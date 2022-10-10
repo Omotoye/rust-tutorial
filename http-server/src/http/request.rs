@@ -4,13 +4,13 @@ use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::str::{self, from_utf8, Utf8Error};
 
-pub struct Request {
-    path: String,
-    query_string: Option<String>, // Option is used to represent option of something or nothing
+pub struct Request <'buf> {
+    path: &'buf str,
+    query_string: Option<&'buf str>, // Option is used to represent option of something or nothing
     method: Method,
 }
 
-impl TryFrom<&[u8]> for Request {
+impl<'buf> TryFrom<&[u8]> for Request<'buf> {
     type Error = ParseError;
 
     // GET /search?name=abc&sort=1 HTTP/1.1
@@ -43,7 +43,12 @@ impl TryFrom<&[u8]> for Request {
             query_string = Some(&path[i + 1..]);
             path = &path[..i]; 
         }
-        unimplemented!()
+
+        Ok(Self {
+            path: path, 
+            query_string,
+            method,
+        })
     }
 }
 
