@@ -91,6 +91,29 @@ fn main() {
     let s2: String = s1;
     println!("s2: {s2}");
     // println!("s1: {s1}"); // Compiler Error: borrow of moved value
+    /* 
+    * The assignment of `s1` to `s2` transfers ownership. 
+    * The data was moved from `s1` and `s1` is no longer accessible. 
+    * When `s1` goes out of scope, nothing happens; it has no on ownership. 
+    * When `s2` goes out of scope the string data is freed. 
+    * There is always exactly one variable binding which owns a value. 
+    */
+
+    let name = String::from("Omotoye");
+    println!("\nOwnership: Move in Function Calls\n===================================");
+    say_hello(name);
+    // say_hello(name);   // Compiler Error; Value used after move
+
+    /**** Copying and Cloning *****
+    While move semantics are the default, certain types are copied by default     
+    */
+    println!("\nOwnership: Copying and Cloning\n===================================");
+    let x = 42; 
+    let y = x; // These types use the `Copy` trait 
+    println!("x: {x}");
+    println!("y: {y}");
+    // You can opt-in your own types to use copy semantics: 
+
 }
 
 fn takes_u32(x: u32) {
@@ -109,4 +132,11 @@ fn compute_digest(text: &str) -> [u8; DIGEST_SIZE] {
     digest
 }
 
+/* Moves in Function calls  */
+fn say_hello(name: String) {
+    println!("Hello {name}");
+}
+
+// You can opt-in your own types to use copy semantics: 
+#[derive(Copy, Clone, Debug)]
 struct Point(i32, i32);
