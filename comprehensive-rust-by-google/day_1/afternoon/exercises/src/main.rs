@@ -86,14 +86,36 @@ fn main() {
     //
     println!("Our library has {} books", library.len());
 
-
     /********** Iterators and Ownership ************
-    Iterator 
+    Iterator
     ===========
 
-    Traits are like interfaces: they describe behavior (methods) for a type. The 
+    Traits are like interfaces: they describe behavior (methods) for a type. The
     `iterator` trait simply says that you can call `next` until you get `None` back:
+    The related trait `IntoIterator` tells you how to create the iterator:
     */
-    
 
+    /**** for loops
+     * Now that we know both `Iterator` and `IntoIterator`, we can build `for` loops. They call
+     * `into_iter()` on an expression and iterates over the resulting iterator:
+     *
+     */
+
+    let v: Vec<String> = vec![String::from("foo"), String::from("bar")];
+
+    for word in &v {
+        // this will borrow from the `v` variable
+        println!("word: {word}");
+    }
+
+    for word in v {
+        // this will move the v variable into the for loop
+        println!("word: {word}");
+    }
+
+    // for word in &v {
+    //     // this would not be possible and will result in Compiler Error
+    //     // Because of the move into the for loop that happened above
+    //     println!("word: {word}");
+    // }
 }
